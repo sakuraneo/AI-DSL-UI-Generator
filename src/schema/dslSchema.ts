@@ -9,6 +9,12 @@ export const exampleDSL: DSLNode = {
     { type: "chart", symbol: "BTC" },
     { type: "text", content: "BTC/USDT 现货 · 日线图（嵌入 TradingView）" },
     {
+      type: "link",
+      label: "TradingView 文档",
+      href: "https://www.tradingview.com/widget-docs/widgets/charts/",
+    },
+    { type: "divider" },
+    {
       type: "input",
       label: "委托价格",
       placeholder: "68000.00",

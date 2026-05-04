@@ -17,6 +17,11 @@ export const dslNodeSchema: z.ZodType<DSLNode> = z.lazy(() =>
       href: z.url().optional(),
     }),
     z.object({
+      type: z.literal("link"),
+      label: z.string(),
+      href: z.url(),
+    }),
+    z.object({
       type: z.literal("image"),
       src: z.string().min(1, "需要非空 src"),
       alt: z.string().min(1, "需要非空 alt（无障碍）"),
@@ -32,6 +37,9 @@ export const dslNodeSchema: z.ZodType<DSLNode> = z.lazy(() =>
       inputType: z
         .enum(["text", "number", "email", "password"])
         .optional(),
+    }),
+    z.object({
+      type: z.literal("divider"),
     }),
     z.object({
       type: z.literal("card"),

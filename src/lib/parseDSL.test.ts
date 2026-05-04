@@ -34,4 +34,38 @@ describe("parseDSLJSON", () => {
       )
     ).toThrow(/DSL 校验失败/);
   });
+
+  it("accepts link and divider inside card", () => {
+    const tree = parseDSLJSON(
+      JSON.stringify({
+        type: "card",
+        children: [
+          { type: "text", content: "标题" },
+          { type: "divider" },
+          {
+            type: "link",
+            label: "帮助",
+            href: "https://example.com/help",
+          },
+        ],
+      })
+    );
+    expect(tree.type).toBe("card");
+    expect((tree as { children: unknown[] }).children).toHaveLength(3);
+    expect((tree as { children: { type: string }[] }).children[1]).toEqual({
+      type: "divider",
+    });
+  });
+
+  it("rejects link with invalid href", () => {
+    expect(() =>
+      parseDSLJSON(
+        JSON.stringify({
+          type: "link",
+          label: "x",
+          href: "not-a-url",
+        })
+      )
+    ).toThrow(/DSL 校验失败/);
+  });
 });

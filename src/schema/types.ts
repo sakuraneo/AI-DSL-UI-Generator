@@ -2,9 +2,11 @@
 export type DSLNode =
   | TextNode
   | ButtonNode
+  | LinkNode
   | ImageNode
   | ChartNode
   | InputNode
+  | DividerNode
   | CardNode
   | ContainerNode;
 
@@ -24,6 +26,13 @@ export interface ButtonNode extends BaseNode {
   action?: string;
   /** 若填写合法 http(s) URL，渲染为外链按钮并在新标签打开（常用于官网） */
   href?: string;
+}
+
+/** 行内文本链接（区别于块状 button） */
+export interface LinkNode extends BaseNode {
+  type: "link";
+  href: string;
+  label: string;
 }
 
 export interface ImageNode extends BaseNode {
@@ -46,6 +55,11 @@ export interface InputNode extends BaseNode {
   placeholder?: string;
   /** 对应原生 input 的 type，避免与节点 type 重名 */
   inputType?: "text" | "number" | "email" | "password";
+}
+
+/** 横向分隔线 */
+export interface DividerNode extends BaseNode {
+  type: "divider";
 }
 
 export interface CardNode extends BaseNode {

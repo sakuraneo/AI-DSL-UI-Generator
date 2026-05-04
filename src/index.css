@@ -141,6 +141,34 @@ code {
   font-size: 0.95rem;
 }
 
+.dsl-link {
+  color: var(--accent);
+  font-size: 0.95rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.dsl-link:hover {
+  color: var(--text-h);
+}
+
+.dsl-link:focus {
+  outline: none;
+}
+
+.dsl-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.dsl-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.35rem 0;
+  width: 100%;
+}
+
 .dsl-btn {
   display: inline-flex;
   align-items: center;

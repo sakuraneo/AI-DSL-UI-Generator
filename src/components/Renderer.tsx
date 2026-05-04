@@ -1,5 +1,5 @@
 import { useId } from "react";
-import type { DSLNode, InputNode } from "../schema/types";
+import type { DSLNode, InputNode, LinkNode } from "../schema/types";
 import type { TradingViewChartTheme } from "../lib/tradingViewChart";
 import {
   resolveTradingViewSymbol,
@@ -45,6 +45,19 @@ function InputField({ node }: { node: InputNode }) {
   );
 }
 
+function DslLink({ node }: { node: LinkNode }) {
+  return (
+    <a
+      className="dsl-link"
+      href={node.href}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {node.label}
+    </a>
+  );
+}
+
 function ChartFrame({ symbol }: { symbol: string }) {
   const tv = resolveTradingViewSymbol(symbol);
   const { effectiveScheme } = useTheme();
@@ -65,6 +78,12 @@ export default function Renderer({ node }: { node: DSLNode }) {
   switch (node.type) {
     case "text":
       return <p className="dsl-text">{node.content}</p>;
+
+    case "link":
+      return <DslLink node={node} />;
+
+    case "divider":
+      return <hr className="dsl-divider" />;
 
     case "button": {
       if (node.href) {
