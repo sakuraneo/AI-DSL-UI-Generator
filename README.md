@@ -8,7 +8,7 @@
 - **Vite 开发代理** 调用 `api.deepseek.com`，密钥仅存在于 Node 侧环境变量
 - **React 19** 同构树渲染、基础 **a11y** 与主题变量（`index.css`）
 - **Vitest** 单测 + **GitHub Actions**（pnpm frozen lockfile + lint + build + test）
-- 页面内 **复制 / 下载** 当前 DSL JSON，及 **粘贴 JSON** 经 Zod 校验后预览（不依赖联网）
+- 页面内 **复制 / 下载** 当前 DSL JSON，**粘贴** 或 **选择本地 `.json` 文件** 导入，经 Zod 校验后预览（不依赖联网）
 
 详细架构、Mermaid 数据流与答辩话术见 **[TECHNICAL.md](./TECHNICAL.md)**。
 

@@ -1,4 +1,9 @@
-import { useCallback, useState } from "react";
+import {
+  useCallback,
+  useRef,
+  useState,
+  type ChangeEvent,
+} from "react";
 import Renderer from "./components/Renderer";
 import { exampleDSL } from "./schema/dslSchema";
 import type { DSLNode } from "./schema/types";
@@ -74,6 +79,7 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [jsonDraft, setJsonDraft] = useState("");
   const [copyHint, setCopyHint] = useState<string | null>(null);
+  const dslJsonFileRef = useRef<HTMLInputElement>(null);
 
   const onGenerate = useCallback(async () => {
     setError(null);
@@ -125,6 +131,29 @@ export default function App() {
       setError(e instanceof Error ? e.message : String(e));
     }
   }, [jsonDraft]);
+
+  const onClickPickJsonFile = useCallback(() => {
+    dslJsonFileRef.current?.click();
+  }, []);
+
+  const onJsonFileSelected = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      e.target.value = "";
+      if (!file) return;
+      setError(null);
+      setCopyHint(null);
+      try {
+        const text = await file.text();
+        setJsonDraft(text);
+        const tree = parseDSLJSON(text);
+        setDsl(tree);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      }
+    },
+    []
+  );
 
   return (
     <div style={{ padding: 20, fontFamily: "system-ui, sans-serif", maxWidth: 720 }}>
@@ -213,8 +242,17 @@ export default function App() {
 
       <h3 style={{ marginTop: 24, marginBottom: 8 }}>DSL JSON</h3>
       <p style={{ margin: "0 0 8px", fontSize: 13, color: "#555", textAlign: "start" }}>
-        导出当前预览对应的 JSON，或粘贴模型 / 文件中的 JSON，经 Zod 校验后应用到下方预览。
+        导出当前预览对应的 JSON，或粘贴 / <strong>选择本地 .json 文件</strong>
+        ，经 Zod 校验后应用到下方预览。
       </p>
+      <input
+        ref={dslJsonFileRef}
+        type="file"
+        accept=".json,application/json"
+        style={{ display: "none" }}
+        tabIndex={-1}
+        onChange={(ev) => void onJsonFileSelected(ev)}
+      />
       <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
         <button
           type="button"
@@ -257,6 +295,20 @@ export default function App() {
           }}
         >
           用当前 DSL 填入下方
+        </button>
+        <button
+          type="button"
+          onClick={onClickPickJsonFile}
+          style={{
+            padding: "8px 16px",
+            borderRadius: 8,
+            border: "1px solid #1a3a8f",
+            background: "#e8eefc",
+            color: "#153885",
+            cursor: "pointer",
+          }}
+        >
+          导入本地 JSON 文件
         </button>
       </div>
       {copyHint && (
