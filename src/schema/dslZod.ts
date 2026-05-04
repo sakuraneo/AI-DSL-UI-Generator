@@ -43,6 +43,8 @@ export const dslNodeSchema: z.ZodType<DSLNode> = z.lazy(() =>
     }),
     z.object({
       type: z.literal("card"),
+      width: z.number().int().min(80).max(4096).optional(),
+      height: z.number().int().min(80).max(4096).optional(),
       children: z.array(dslNodeSchema),
     }),
     z.object({

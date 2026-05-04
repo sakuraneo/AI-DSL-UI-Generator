@@ -15,7 +15,8 @@ const SYSTEM_PROMPT = `你是一个 UI DSL 生成器，只输出一个合法的 
 6) { "type": "chart", "symbol": string }
    — symbol 用 BTC、ETH、SOL 等简称，预览中为日线图（TradingView 嵌入）。
 7) { "type": "input", "label"?: string, "placeholder"?: string, "inputType"?: "text"|"number"|"email"|"password" }
-8) { "type": "card", "children": DSLNode[] }
+8) { "type": "card", "width"?: number, "height"?: number, "children": DSLNode[] }
+   — width/height 为预览卡片像素尺寸（80–4096），可省略；预览中可拖拽右下角调整并写回。
 9) { "type": "container", "direction"?: "row"|"column", "gap"?: number, "children": DSLNode[] }
 
 常用模式：card 内组合 text / divider / link / chart / button；divider 用于区块分隔。

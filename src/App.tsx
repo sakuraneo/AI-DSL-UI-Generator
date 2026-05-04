@@ -71,6 +71,16 @@ function ThemeToolbar() {
 const PROMPT_PLACEHOLDER =
   "例如：做一个显示BTC今日价格的图表卡片，包含标题为“BTC今日价格走势”，和一个跳转到欧易官网btc模块的按钮，并在下方显示今日BTC最高价和最低价，设置目标价格，在打开官网的按钮左侧显示当前价格是否高于目标价";
 
+function mergeRootCardPixelSize(
+  prev: DSLNode,
+  w: number,
+  h: number
+): DSLNode {
+  if (prev.type !== "card") return prev;
+  if (prev.width === w && prev.height === h) return prev;
+  return { ...prev, width: w, height: h };
+}
+
 export default function App() {
   const [dsl, setDsl] = useState<DSLNode>(exampleDSL);
   const [prompt, setPrompt] = useState(
@@ -98,6 +108,10 @@ export default function App() {
   const onReset = useCallback(() => {
     setDsl(exampleDSL);
     setError(null);
+  }, []);
+
+  const onRootCardPixelSize = useCallback((w: number, h: number) => {
+    setDsl((prev) => mergeRootCardPixelSize(prev, w, h));
   }, []);
 
   const onCopyDslJson = useCallback(async () => {
@@ -371,7 +385,8 @@ export default function App() {
           textAlign: "start",
         }}
       >
-        下方为画布区域：拖动顶部「拖动卡片」条可移动整页预览（不与卡片内按钮冲突）。
+        下方为画布区域：拖动顶部「拖动卡片」条可移动预览区；卡片右下角可拖拽改变长宽，尺寸会写入根节点
+        card 的 width / height（导出 JSON 可见）。
       </p>
       <div
         style={{ marginTop: 8, textAlign: "start" }}
@@ -379,7 +394,7 @@ export default function App() {
         aria-label="DSL 预览"
       >
         <PreviewCanvas>
-          <Renderer node={dsl} />
+          <Renderer node={dsl} onRootCardPixelSize={onRootCardPixelSize} />
         </PreviewCanvas>
       </div>
     </div>

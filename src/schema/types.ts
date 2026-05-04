@@ -64,6 +64,10 @@ export interface DividerNode extends BaseNode {
 
 export interface CardNode extends BaseNode {
   type: "card";
+  /** 预览卡片宽度（像素），可拖拽右下角改变；不写则由内容撑开 */
+  width?: number;
+  /** 预览卡片高度（像素） */
+  height?: number;
   children: DSLNode[];
 }
 

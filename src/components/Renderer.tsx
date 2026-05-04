@@ -1,4 +1,10 @@
-import { useId } from "react";
+import {
+  useEffect,
+  useId,
+  useRef,
+  type CSSProperties,
+  type ReactNode,
+} from "react";
 import type { DSLNode, InputNode, LinkNode } from "../schema/types";
 import type { TradingViewChartTheme } from "../lib/tradingViewChart";
 import {
@@ -6,6 +12,78 @@ import {
   tradingViewDailyChartEmbedUrl,
 } from "../lib/tradingViewChart";
 import { useTheme } from "../theme/useTheme";
+
+export type RendererProps = {
+  node: DSLNode;
+  /** 仅根节点传入：拖拽调整卡片大小后写回 DSL（仅当根为 card 时 App 内会生效） */
+  onRootCardPixelSize?: (width: number, height: number) => void;
+};
+
+function CardShell({
+  node,
+  onPixelSize,
+  children,
+}: {
+  node: Extract<DSLNode, { type: "card" }>;
+  onPixelSize?: (width: number, height: number) => void;
+  children: ReactNode;
+}) {
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const lastEmitted = useRef<{ w: number; h: number } | null>(null);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    lastEmitted.current = null;
+  }, [node.width, node.height]);
+
+  useEffect(() => {
+    if (!onPixelSize || !sectionRef.current) return;
+    const el = sectionRef.current;
+
+    const flush = () => {
+      const r = el.getBoundingClientRect();
+      const w = Math.round(r.width);
+      const h = Math.round(r.height);
+      if (w < 80 || h < 80) return;
+
+      if (!lastEmitted.current) {
+        lastEmitted.current = { w, h };
+        return;
+      }
+      if (lastEmitted.current.w === w && lastEmitted.current.h === h) return;
+      lastEmitted.current = { w, h };
+
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+      debounceTimer.current = setTimeout(() => {
+        onPixelSize(w, h);
+      }, 200);
+    };
+
+    const ro = new ResizeObserver(flush);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    };
+  }, [onPixelSize]);
+
+  const style: CSSProperties = {};
+  if (node.width != null && node.width >= 80) style.width = node.width;
+  if (node.height != null && node.height >= 80) style.height = node.height;
+
+  return (
+    <section
+      ref={sectionRef}
+      className="dsl-card dsl-card--resizable"
+      style={style}
+      aria-label="卡片内容"
+    >
+      {children}
+    </section>
+  );
+}
 
 function InputField({ node }: { node: InputNode }) {
   const id = useId();
@@ -74,7 +152,10 @@ function ChartFrame({ symbol }: { symbol: string }) {
   );
 }
 
-export default function Renderer({ node }: { node: DSLNode }) {
+export default function Renderer({
+  node,
+  onRootCardPixelSize,
+}: RendererProps) {
   switch (node.type) {
     case "text":
       return <p className="dsl-text">{node.content}</p>;
@@ -143,11 +224,11 @@ export default function Renderer({ node }: { node: DSLNode }) {
 
     case "card":
       return (
-        <section className="dsl-card" aria-label="卡片内容">
+        <CardShell node={node} onPixelSize={onRootCardPixelSize}>
           {node.children.map((child, index) => (
             <Renderer key={index} node={child} />
           ))}
-        </section>
+        </CardShell>
       );
 
     case "container":

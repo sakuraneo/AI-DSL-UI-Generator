@@ -226,7 +226,7 @@ code {
   border: 1px solid var(--border);
   border-radius: 0 0 10px 10px;
   background: var(--bg);
-  overflow: hidden;
+  overflow: auto;
 }
 
 .dsl-btn {
@@ -289,6 +289,16 @@ a.dsl-btn--link {
   background: var(--social-bg);
   box-shadow: var(--shadow);
   text-align: start;
+}
+
+/* 预览内拖拽右下角改变卡片尺寸（与 DSL card.width / height 同步，见 Renderer） */
+.dsl-card--resizable {
+  resize: both;
+  overflow: auto;
+  min-width: 240px;
+  min-height: 160px;
+  max-width: 100%;
+  align-self: flex-start;
 }
 
 .dsl-container {

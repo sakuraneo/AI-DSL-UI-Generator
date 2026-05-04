@@ -14,6 +14,23 @@ describe("parseDSLJSON", () => {
     });
   });
 
+  it("parses card with width and height", () => {
+    const tree = parseDSLJSON(
+      JSON.stringify({
+        type: "card",
+        width: 400,
+        height: 300,
+        children: [{ type: "text", content: "x" }],
+      })
+    );
+    expect(tree).toEqual({
+      type: "card",
+      width: 400,
+      height: 300,
+      children: [{ type: "text", content: "x" }],
+    });
+  });
+
   it("strips ```json fences", () => {
     const inner = JSON.stringify({ type: "text", content: "x" });
     const wrapped = "```json\n" + inner + "\n```";
