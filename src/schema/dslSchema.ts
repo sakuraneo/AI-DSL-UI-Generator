@@ -4,35 +4,65 @@ import type { DSLNode } from "./types";
  * 示例 DSL：card → 图文 + 表单占位 + 操作行
  */
 export const exampleDSL: DSLNode = {
-  type: "card",
-  children: [
-    { type: "chart", symbol: "BTC" },
-    { type: "text", content: "BTC/USDT 现货 · 日线图（嵌入 TradingView）" },
+  "type": "card",
+  "children": [
     {
-      type: "link",
-      label: "TradingView 文档",
-      href: "https://www.tradingview.com/widget-docs/widgets/charts/",
-    },
-    { type: "divider" },
-    {
-      type: "input",
-      label: "委托价格",
-      placeholder: "68000.00",
-      inputType: "text",
+      "type": "text",
+      "content": "BTC今日价格走势"
     },
     {
-      type: "container",
-      direction: "row",
-      gap: 12,
-      children: [
-        { type: "text", content: "Price: 68000" },
+      "type": "divider"
+    },
+    {
+      "type": "chart",
+      "symbol": "BTC"
+    },
+    {
+      "type": "divider"
+    },
+    ,
+    {
+      "type": "input",
+      "label": "目标价格",
+      "placeholder": "输入目标价",
+      "inputType": "number"
+    },
+    {
+      "type": "container",
+      "direction": "row",
+      "gap": 10,
+      "children": [
         {
-          type: "button",
-          label: "打开欧易 BTC",
-          href: "https://www.okx.com/zh-hans/trade-spot/btc-usdt",
-          action: "navigate.official",
+          "type": "text",
+          "content": "当前价格高于目标价"
         },
-      ],
+        {
+          "type": "button",
+          "label": "打开欧易官网",
+          "href": "https://www.okx.com/zh-hans/price/btc"
+        }
+      ]
     },
-  ],
-};
+    {
+      "type": "divider"
+    },
+    {
+      "type": "container",
+      "direction": "row",
+      "gap": 10,
+      "children": [
+        {
+          "type": "text",
+          "content": "今日最高价: 58000 USD"
+        },
+        {
+          "type": "text",
+          "content": "今日最低价: 52000 USD"
+        }
+      ]
+    },
+    {
+      "type": "divider"
+    }
+  ]
+}

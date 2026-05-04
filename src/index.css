@@ -169,6 +169,66 @@ code {
   width: 100%;
 }
 
+/* 预览画布：可拖动卡片 */
+.dsl-canvas {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 960px;
+  overflow: auto;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background-color: color-mix(in srgb, var(--social-bg) 85%, transparent);
+  background-image: radial-gradient(
+    var(--border) 0.8px,
+    transparent 0.8px
+  );
+  background-size: 18px 18px;
+}
+
+.dsl-canvas-panel {
+  position: absolute;
+  z-index: 1;
+  box-sizing: border-box;
+  min-width: min(100%, 280px);
+  max-width: calc(100% - 32px);
+}
+
+.dsl-canvas-handle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-h);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+
+.dsl-canvas-handle:active {
+  cursor: grabbing;
+}
+
+.dsl-canvas-handle-icon {
+  opacity: 0.7;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.dsl-canvas-body {
+  border: 1px solid var(--border);
+  border-radius: 0 0 10px 10px;
+  background: var(--bg);
+  overflow: hidden;
+}
+
 .dsl-btn {
   display: inline-flex;
   align-items: center;

@@ -4,6 +4,7 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
+import { PreviewCanvas } from "./components/PreviewCanvas";
 import Renderer from "./components/Renderer";
 import { exampleDSL } from "./schema/dslSchema";
 import type { DSLNode } from "./schema/types";
@@ -68,12 +69,12 @@ function ThemeToolbar() {
 
 /** 仅当输入框被清空时可见；有 value 时浏览器不显示 placeholder */
 const PROMPT_PLACEHOLDER =
-  "例如：做一个显示BTC今日价格的图表卡片，包含标题为“BTC今日价格走势”，和一个跳转到欧易官网btc模块的按钮，并在下方显示今日BTC最高价和最低价 等 action";
+  "例如：做一个显示BTC今日价格的图表卡片，包含标题为“BTC今日价格走势”，和一个跳转到欧易官网btc模块的按钮，并在下方显示今日BTC最高价和最低价，设置目标价格，在打开官网的按钮左侧显示当前价格是否高于目标价";
 
 export default function App() {
   const [dsl, setDsl] = useState<DSLNode>(exampleDSL);
   const [prompt, setPrompt] = useState(
-    "例如：做一个显示BTC今日价格的图表卡片，包含标题为“BTC今日价格走势”，和一个跳转到欧易官网btc模块的按钮，并在下方显示今日BTC最高价和最低价 等 action"
+    "例如：做一个显示BTC今日价格的图表卡片，包含标题为“BTC今日价格走势”，和一个跳转到欧易官网btc模块的按钮，并在下方显示今日BTC最高价和最低价，设置目标价格，在打开官网的按钮左侧显示当前价格是否高于目标价"
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -362,12 +363,24 @@ export default function App() {
       </div>
 
       <h3 style={{ marginTop: 24, marginBottom: 8 }}>预览</h3>
+      <p
+        style={{
+          margin: "0 0 8px",
+          fontSize: 13,
+          color: "#555",
+          textAlign: "start",
+        }}
+      >
+        下方为画布区域：拖动顶部「拖动卡片」条可移动整页预览（不与卡片内按钮冲突）。
+      </p>
       <div
         style={{ marginTop: 8, textAlign: "start" }}
         role="region"
         aria-label="DSL 预览"
       >
-        <Renderer node={dsl} />
+        <PreviewCanvas>
+          <Renderer node={dsl} />
+        </PreviewCanvas>
       </div>
     </div>
   );
