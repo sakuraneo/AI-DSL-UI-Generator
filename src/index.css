@@ -146,6 +146,27 @@ code {
   outline-offset: 2px;
 }
 
+a.dsl-btn--link {
+  text-decoration: none;
+}
+
+.dsl-chart-wrap {
+  width: 100%;
+  max-width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.dsl-chart-frame {
+  display: block;
+  width: 100%;
+  min-height: 280px;
+  height: 360px;
+  border: none;
+}
+
 .dsl-card {
   box-sizing: border-box;
   border: 1px solid var(--border);

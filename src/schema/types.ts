@@ -3,6 +3,7 @@ export type DSLNode =
   | TextNode
   | ButtonNode
   | ImageNode
+  | ChartNode
   | InputNode
   | CardNode
   | ContainerNode;
@@ -21,6 +22,8 @@ export interface ButtonNode extends BaseNode {
   label: string;
   /** 可选：动作标识或表达式，由宿主（或后续 AI 管线）解释执行 */
   action?: string;
+  /** 若填写合法 http(s) URL，渲染为外链按钮并在新标签打开（常用于官网） */
+  href?: string;
 }
 
 export interface ImageNode extends BaseNode {
@@ -28,6 +31,12 @@ export interface ImageNode extends BaseNode {
   src: string;
   /** 替代文本，供读屏与图片失败时显示 */
   alt: string;
+}
+
+/** 嵌入式日线图（TradingView widget），symbol 如 BTC、ETH */
+export interface ChartNode extends BaseNode {
+  type: "chart";
+  symbol: string;
 }
 
 export interface InputNode extends BaseNode {

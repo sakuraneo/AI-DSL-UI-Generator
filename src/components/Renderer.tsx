@@ -1,5 +1,11 @@
-import { useId } from "react";
+import { useEffect, useId, useState } from "react";
 import type { DSLNode, InputNode } from "../schema/types";
+import type { TradingViewChartTheme } from "../lib/tradingViewChart";
+import {
+  resolveTradingViewSymbol,
+  resolveTradingViewTheme,
+  tradingViewDailyChartEmbedUrl,
+} from "../lib/tradingViewChart";
 
 function InputField({ node }: { node: InputNode }) {
   const id = useId();
@@ -39,12 +45,55 @@ function InputField({ node }: { node: InputNode }) {
   );
 }
 
+function ChartFrame({ symbol }: { symbol: string }) {
+  const tv = resolveTradingViewSymbol(symbol);
+  const [theme, setTheme] = useState<TradingViewChartTheme>(() =>
+    resolveTradingViewTheme()
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const sync = () => setTheme(resolveTradingViewTheme());
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  const src = tradingViewDailyChartEmbedUrl(tv, theme);
+  return (
+    <div className="dsl-chart-wrap">
+      <iframe
+        className="dsl-chart-frame"
+        src={src}
+        title={`${symbol.trim().toUpperCase()} 日线图（TradingView）`}
+      />
+    </div>
+  );
+}
+
 export default function Renderer({ node }: { node: DSLNode }) {
   switch (node.type) {
     case "text":
       return <p className="dsl-text">{node.content}</p>;
 
-    case "button":
+    case "button": {
+      if (node.href) {
+        return (
+          <a
+            className="dsl-btn dsl-btn--link"
+            href={node.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => {
+              if (node.action) {
+                console.log("DSL action:", node.action);
+              }
+            }}
+          >
+            {node.label}
+          </a>
+        );
+      }
       return (
         <button
           type="button"
@@ -64,6 +113,7 @@ export default function Renderer({ node }: { node: DSLNode }) {
           {node.label}
         </button>
       );
+    }
 
     case "image":
       return (
@@ -75,6 +125,9 @@ export default function Renderer({ node }: { node: DSLNode }) {
           decoding="async"
         />
       );
+
+    case "chart":
+      return <ChartFrame symbol={node.symbol} />;
 
     case "input":
       return <InputField node={node} />;

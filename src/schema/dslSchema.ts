@@ -6,12 +6,8 @@ import type { DSLNode } from "./types";
 export const exampleDSL: DSLNode = {
   type: "card",
   children: [
-    {
-      type: "image",
-      src: "https://picsum.photos/seed/dsl-demo/320/160",
-      alt: "示例配图",
-    },
-    { type: "text", content: "BTC/USDT" },
+    { type: "chart", symbol: "BTC" },
+    { type: "text", content: "BTC/USDT 现货 · 日线图（嵌入 TradingView）" },
     {
       type: "input",
       label: "委托价格",
@@ -24,7 +20,12 @@ export const exampleDSL: DSLNode = {
       gap: 12,
       children: [
         { type: "text", content: "Price: 68000" },
-        { type: "button", label: "Buy", action: "order.buy" },
+        {
+          type: "button",
+          label: "打开欧易 BTC",
+          href: "https://www.okx.com/zh-hans/trade-spot/btc-usdt",
+          action: "navigate.official",
+        },
       ],
     },
   ],

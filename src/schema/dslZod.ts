@@ -14,11 +14,16 @@ export const dslNodeSchema: z.ZodType<DSLNode> = z.lazy(() =>
       type: z.literal("button"),
       label: z.string(),
       action: z.string().optional(),
+      href: z.url().optional(),
     }),
     z.object({
       type: z.literal("image"),
       src: z.string().min(1, "需要非空 src"),
       alt: z.string().min(1, "需要非空 alt（无障碍）"),
+    }),
+    z.object({
+      type: z.literal("chart"),
+      symbol: z.string().min(1, "需要 symbol，如 BTC"),
     }),
     z.object({
       type: z.literal("input"),
