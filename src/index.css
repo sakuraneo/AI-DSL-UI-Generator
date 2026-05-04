@@ -163,3 +163,47 @@ code {
   display: flex;
   box-sizing: border-box;
 }
+
+.dsl-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  display: block;
+}
+
+.dsl-input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+  text-align: start;
+}
+
+.dsl-input-label {
+  font-size: 0.875rem;
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.dsl-input {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font: inherit;
+}
+
+.dsl-input:focus {
+  outline: none;
+}
+
+.dsl-input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

@@ -88,7 +88,8 @@ export default function App() {
       {import.meta.env.DEV && (
         <p style={{ marginTop: 12, fontSize: 13, color: "#555" }}>
           开发模式：在项目根目录配置 <code>DEEPSEEK_API_KEY</code>（见{" "}
-          <code>.env.example</code>），保存后重启开发服务器。
+          <code>.env.example</code>），保存后执行 <code>pnpm run dev</code>{" "}
+          重启开发服务器。
         </p>
       )}
 

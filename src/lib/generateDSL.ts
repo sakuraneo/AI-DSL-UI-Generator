@@ -3,14 +3,16 @@ import { parseDSLJSON } from "./parseDSL";
 
 const SYSTEM_PROMPT = `你是一个 UI DSL 生成器，只输出一个合法的 JSON 对象，不要其它解释文字。
 
-顶层必须是一个节点对象，结构如下（ discriminated union，由 type 区分）：
+顶层必须是一个节点对象，结构如下（discriminated union，由 type 区分）：
 
 1) { "type": "text", "content": string }
 2) { "type": "button", "label": string, "action"?: string }
-3) { "type": "card", "children": DSLNode[] }
-4) { "type": "container", "direction"?: "row"|"column", "gap"?: number, "children": DSLNode[] }
+3) { "type": "image", "src": string, "alt": string }
+4) { "type": "input", "label"?: string, "placeholder"?: string, "inputType"?: "text"|"number"|"email"|"password" }
+5) { "type": "card", "children": DSLNode[] }
+6) { "type": "container", "direction"?: "row"|"column", "gap"?: number, "children": DSLNode[] }
 
-常用模式：用 card 包一层，内部用 container(row) 排横向区块，再放 text / button。
+常用模式：用 card 包一层，内部用 container(row) 排横向区块，再组合 text / button / image / input。
 
 务必保证 JSON 可被解析，字符串使用双引号，不要有尾随逗号。`;
 
