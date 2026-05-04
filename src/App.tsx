@@ -111,7 +111,11 @@ export default function App() {
       )}
 
       <h3 style={{ marginTop: 24, marginBottom: 8 }}>预览</h3>
-      <div style={{ marginTop: 8 }}>
+      <div
+        style={{ marginTop: 8, textAlign: "start" }}
+        role="region"
+        aria-label="DSL 预览"
+      >
         <Renderer node={dsl} />
       </div>
     </div>
