@@ -2,7 +2,9 @@ import { useCallback, useState } from "react";
 import Renderer from "./components/Renderer";
 import { exampleDSL } from "./schema/dslSchema";
 import type { DSLNode } from "./schema/types";
+import { copyTextToClipboard, downloadDslFile, stringifyDsl } from "./lib/dslJsonIo";
 import { generateDSLFromPrompt } from "./lib/generateDSL";
+import { parseDSLJSON } from "./lib/parseDSL";
 
 /** 仅当输入框被清空时可见；有 value 时浏览器不显示 placeholder */
 const PROMPT_PLACEHOLDER =
@@ -11,10 +13,12 @@ const PROMPT_PLACEHOLDER =
 export default function App() {
   const [dsl, setDsl] = useState<DSLNode>(exampleDSL);
   const [prompt, setPrompt] = useState(
-    "做一个咖啡订单卡片：标题「今日特调」，下面一行显示价格 32 元和一个「下单」按钮，action 用 order.coffee"
+    "例如：做一个显示BTC今日价格的图表卡片，包含标题为“BTC今日价格走势”，和一个跳转到欧易官网btc模块的按钮，并在下方显示今日BTC最高价和最低价 等 action"
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [jsonDraft, setJsonDraft] = useState("");
+  const [copyHint, setCopyHint] = useState<string | null>(null);
 
   const onGenerate = useCallback(async () => {
     setError(null);
@@ -33,6 +37,39 @@ export default function App() {
     setDsl(exampleDSL);
     setError(null);
   }, []);
+
+  const onCopyDslJson = useCallback(async () => {
+    setCopyHint(null);
+    setError(null);
+    try {
+      await copyTextToClipboard(stringifyDsl(dsl));
+      setCopyHint("已复制到剪贴板");
+      window.setTimeout(() => setCopyHint(null), 2000);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "复制失败");
+    }
+  }, [dsl]);
+
+  const onDownloadDslJson = useCallback(() => {
+    setError(null);
+    downloadDslFile(dsl, "dsl.json");
+  }, [dsl]);
+
+  const onFillJsonFromDsl = useCallback(() => {
+    setError(null);
+    setJsonDraft(stringifyDsl(dsl));
+  }, [dsl]);
+
+  const onApplyJsonDraft = useCallback(() => {
+    setError(null);
+    setCopyHint(null);
+    try {
+      const tree = parseDSLJSON(jsonDraft);
+      setDsl(tree);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    }
+  }, [jsonDraft]);
 
   return (
     <div style={{ padding: 20, fontFamily: "system-ui, sans-serif", maxWidth: 720 }}>
@@ -116,6 +153,104 @@ export default function App() {
           {error}
         </div>
       )}
+
+      <h3 style={{ marginTop: 24, marginBottom: 8 }}>DSL JSON</h3>
+      <p style={{ margin: "0 0 8px", fontSize: 13, color: "#555", textAlign: "start" }}>
+        导出当前预览对应的 JSON，或粘贴模型 / 文件中的 JSON，经 Zod 校验后应用到下方预览。
+      </p>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 8 }}>
+        <button
+          type="button"
+          onClick={() => void onCopyDslJson()}
+          style={{
+            padding: "8px 16px",
+            borderRadius: 8,
+            border: "1px solid #333",
+            background: "#fff",
+            color: "#111",
+            cursor: "pointer",
+          }}
+        >
+          复制当前 DSL
+        </button>
+        <button
+          type="button"
+          onClick={onDownloadDslJson}
+          style={{
+            padding: "8px 16px",
+            borderRadius: 8,
+            border: "1px solid #333",
+            background: "#fff",
+            color: "#111",
+            cursor: "pointer",
+          }}
+        >
+          下载 dsl.json
+        </button>
+        <button
+          type="button"
+          onClick={onFillJsonFromDsl}
+          style={{
+            padding: "8px 16px",
+            borderRadius: 8,
+            border: "1px solid #ccc",
+            background: "#f8f8f8",
+            color: "#333",
+            cursor: "pointer",
+          }}
+        >
+          用当前 DSL 填入下方
+        </button>
+      </div>
+      {copyHint && (
+        <p
+          role="status"
+          style={{ margin: "0 0 8px", fontSize: 13, color: "#0a0" }}
+        >
+          {copyHint}
+        </p>
+      )}
+      <label
+        style={{ display: "block", fontWeight: 600, marginBottom: 6, textAlign: "start" }}
+        htmlFor="dsl-json-import"
+      >
+        粘贴 JSON
+      </label>
+      <textarea
+        id="dsl-json-import"
+        value={jsonDraft}
+        onChange={(e) => setJsonDraft(e.target.value)}
+        rows={8}
+        spellCheck={false}
+        style={{
+          width: "100%",
+          boxSizing: "border-box",
+          padding: 10,
+          fontSize: 13,
+          fontFamily: "ui-monospace, Consolas, monospace",
+          borderRadius: 8,
+          border: "1px solid #ccc",
+          resize: "vertical",
+        }}
+        placeholder='{"type":"card","children":[...]}'
+      />
+      <div style={{ marginTop: 8 }}>
+        <button
+          type="button"
+          onClick={onApplyJsonDraft}
+          style={{
+            padding: "8px 16px",
+            fontWeight: 600,
+            borderRadius: 8,
+            border: "1px solid #1a5f1a",
+            background: "#e8f5e9",
+            color: "#1b5e20",
+            cursor: "pointer",
+          }}
+        >
+          校验并应用到预览
+        </button>
+      </div>
 
       <h3 style={{ marginTop: 24, marginBottom: 8 }}>预览</h3>
       <div
