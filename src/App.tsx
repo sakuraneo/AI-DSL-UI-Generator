@@ -4,6 +4,10 @@ import { exampleDSL } from "./schema/dslSchema";
 import type { DSLNode } from "./schema/types";
 import { generateDSLFromPrompt } from "./lib/generateDSL";
 
+/** 仅当输入框被清空时可见；有 value 时浏览器不显示 placeholder */
+const PROMPT_PLACEHOLDER =
+  "例如：做一个显示BTC今日价格的图表卡片，包含标题为“BTC今日价格走势”，和一个跳转到欧易官网btc模块的按钮，并在下方显示今日BTC最高价和最低价 等 action";
+
 export default function App() {
   const [dsl, setDsl] = useState<DSLNode>(exampleDSL);
   const [prompt, setPrompt] = useState(
@@ -37,6 +41,7 @@ export default function App() {
       <label style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>
         用自然语言描述界面
       </label>
+      <p style={{ marginBottom: 6, fontSize: 13, color: "#555" }}>{PROMPT_PLACEHOLDER}</p>
       <textarea
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
@@ -79,6 +84,7 @@ export default function App() {
             border: "1px solid #ccc",
             background: "#fff",
             cursor: loading ? "not-allowed" : "pointer",
+            color: "#333",
           }}
         >
           恢复示例
