@@ -29,15 +29,7 @@ export function resolveTradingViewSymbol(input: string): string {
 
 export type TradingViewChartTheme = "light" | "dark";
 
-/** 与页面 CSS（prefers-color-scheme）一致的主题 */
-export function resolveTradingViewTheme(): TradingViewChartTheme {
-  if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
-}
-
-/** 日线图嵌入 URL（当日走势即日线周期） */
+/** 日线图嵌入 URL（当日走势即日线周期）；theme 由上层 ThemeContext 与页面一致 */
 export function tradingViewDailyChartEmbedUrl(
   tvSymbol: string,
   theme: TradingViewChartTheme = "light"

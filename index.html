@@ -2,6 +2,18 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        try {
+          var k = "dsl-ui-theme-preference";
+          var p = localStorage.getItem(k) || "system";
+          if (p !== "light" && p !== "dark" && p !== "system") p = "system";
+          document.documentElement.dataset.theme = p;
+        } catch (e) {
+          document.documentElement.dataset.theme = "system";
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ai-dsl-ui-generator</title>

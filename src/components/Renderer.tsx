@@ -1,11 +1,11 @@
-import { useEffect, useId, useState } from "react";
+import { useId } from "react";
 import type { DSLNode, InputNode } from "../schema/types";
 import type { TradingViewChartTheme } from "../lib/tradingViewChart";
 import {
   resolveTradingViewSymbol,
-  resolveTradingViewTheme,
   tradingViewDailyChartEmbedUrl,
 } from "../lib/tradingViewChart";
+import { useTheme } from "../theme/useTheme";
 
 function InputField({ node }: { node: InputNode }) {
   const id = useId();
@@ -47,19 +47,9 @@ function InputField({ node }: { node: InputNode }) {
 
 function ChartFrame({ symbol }: { symbol: string }) {
   const tv = resolveTradingViewSymbol(symbol);
-  const [theme, setTheme] = useState<TradingViewChartTheme>(() =>
-    resolveTradingViewTheme()
-  );
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const sync = () => setTheme(resolveTradingViewTheme());
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
-
-  const src = tradingViewDailyChartEmbedUrl(tv, theme);
+  const { effectiveScheme } = useTheme();
+  const chartTheme: TradingViewChartTheme = effectiveScheme;
+  const src = tradingViewDailyChartEmbedUrl(tv, chartTheme);
   return (
     <div className="dsl-chart-wrap">
       <iframe

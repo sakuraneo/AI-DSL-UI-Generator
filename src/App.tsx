@@ -5,6 +5,61 @@ import type { DSLNode } from "./schema/types";
 import { copyTextToClipboard, downloadDslFile, stringifyDsl } from "./lib/dslJsonIo";
 import { generateDSLFromPrompt } from "./lib/generateDSL";
 import { parseDSLJSON } from "./lib/parseDSL";
+import type { ThemePreference } from "./theme/themePreference";
+import { useTheme } from "./theme/useTheme";
+
+function ThemeToolbar() {
+  const { preference, setPreference } = useTheme();
+  const modes: { id: ThemePreference; label: string }[] = [
+    { id: "light", label: "浅色" },
+    { id: "dark", label: "深色" },
+    { id: "system", label: "跟随系统" },
+  ];
+  return (
+    <div
+      role="group"
+      aria-label="界面主题"
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 8,
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 16,
+      }}
+    >
+      <span
+        style={{
+          fontSize: 14,
+          fontWeight: 600,
+          color: "var(--text-h)",
+        }}
+      >
+        主题
+      </span>
+      {modes.map(({ id, label }) => (
+        <button
+          key={id}
+          type="button"
+          aria-pressed={preference === id}
+          onClick={() => setPreference(id)}
+          style={{
+            padding: "6px 14px",
+            borderRadius: 8,
+            border: "1px solid var(--border)",
+            background:
+              preference === id ? "var(--accent-bg)" : "transparent",
+            color: "var(--text-h)",
+            cursor: "pointer",
+            fontSize: 13,
+          }}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 /** 仅当输入框被清空时可见；有 value 时浏览器不显示 placeholder */
 const PROMPT_PLACEHOLDER =
@@ -74,6 +129,8 @@ export default function App() {
   return (
     <div style={{ padding: 20, fontFamily: "system-ui, sans-serif", maxWidth: 720 }}>
       <h2 style={{ marginTop: 0 }}>AI DSL UI Generator</h2>
+
+      <ThemeToolbar />
 
       <label style={{ display: "block", fontWeight: 600, marginBottom: 6 }}>
         用自然语言描述界面
