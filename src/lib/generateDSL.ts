@@ -20,6 +20,7 @@ const SYSTEM_PROMPT = `你是一个 UI DSL 生成器，只输出一个合法的 
 9) { "type": "container", "direction"?: "row"|"column", "gap"?: number, "children": DSLNode[] }
 
 常用模式：card 内组合 text / divider / link / chart / button；divider 用于区块分隔。
+多张独立卡片时：用 { "type":"container","direction":"column","gap":16,"children":[ {...card1}, {...card2} ] }，children 全部为 card；预览里每张卡片可分别拖动。
 
 务必保证 JSON 可被解析，字符串使用双引号，不要有尾随逗号。`;
 

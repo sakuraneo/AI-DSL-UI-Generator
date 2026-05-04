@@ -169,12 +169,39 @@ code {
   width: 100%;
 }
 
-/* 预览画布：可拖动卡片 */
+/* 预览区与表单分栏：画布占满 #root 内容宽，不跟表单一起限 720px */
+.app-preview-bleed {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0 20px 40px;
+  margin: 0;
+}
+
+.app-preview-bleed-intro {
+  max-width: 720px;
+  margin: 0 auto 12px;
+  text-align: start;
+}
+
+.app-preview-canvas-host {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* 预览画布：右下角拖拽调整区域大小；内部卡片仍用手柄拖动 */
 .dsl-canvas {
   position: relative;
   box-sizing: border-box;
+  display: block;
   width: 100%;
-  min-height: 960px;
+  /* 不限制在父级宽度内，便于拖得比视区更宽时出现横向滚动 */
+  max-width: none;
+  min-width: 280px;
+  min-height: 320px;
+  height: 720px;
+  resize: both;
   overflow: auto;
   border-radius: 12px;
   border: 1px dashed var(--border);

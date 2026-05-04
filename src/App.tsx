@@ -4,10 +4,13 @@ import {
   useState,
   type ChangeEvent,
 } from "react";
-import { PreviewCanvas } from "./components/PreviewCanvas";
+import {
+  MultiCardPreviewCanvas,
+  PreviewCanvas,
+} from "./components/PreviewCanvas";
 import Renderer from "./components/Renderer";
 import { exampleDSL } from "./schema/dslSchema";
-import type { DSLNode } from "./schema/types";
+import type { CardNode, ContainerNode, DSLNode } from "./schema/types";
 import { copyTextToClipboard, downloadDslFile, stringifyDsl } from "./lib/dslJsonIo";
 import { generateDSLFromPrompt } from "./lib/generateDSL";
 import { parseDSLJSON } from "./lib/parseDSL";
@@ -79,6 +82,16 @@ function mergeRootCardPixelSize(
   if (prev.type !== "card") return prev;
   if (prev.width === w && prev.height === h) return prev;
   return { ...prev, width: w, height: h };
+}
+
+/** 根为 container 且子节点全部是 card：预览里每张卡片单独一层拖动柄 */
+function isContainerOfOnlyCards(
+  node: DSLNode
+): node is ContainerNode & { children: CardNode[] } {
+  if (node.type !== "container" || node.children.length === 0) {
+    return false;
+  }
+  return node.children.every((c): c is CardNode => c.type === "card");
 }
 
 export default function App() {
@@ -171,7 +184,17 @@ export default function App() {
   );
 
   return (
-    <div style={{ padding: 20, fontFamily: "system-ui, sans-serif", maxWidth: 720 }}>
+    <>
+      <div
+        style={{
+          padding: 20,
+          fontFamily: "system-ui, sans-serif",
+          maxWidth: 720,
+          margin: "0 auto",
+          width: "100%",
+          boxSizing: "border-box",
+        }}
+      >
       <h2 style={{ marginTop: 0 }}>AI DSL UI Generator</h2>
 
       <ThemeToolbar />
@@ -375,28 +398,42 @@ export default function App() {
           校验并应用到预览
         </button>
       </div>
-
-      <h3 style={{ marginTop: 24, marginBottom: 8 }}>预览</h3>
-      <p
-        style={{
-          margin: "0 0 8px",
-          fontSize: 13,
-          color: "#555",
-          textAlign: "start",
-        }}
-      >
-        下方为画布区域：拖动顶部「拖动卡片」条可移动预览区；卡片右下角可拖拽改变长宽，尺寸会写入根节点
-        card 的 width / height（导出 JSON 可见）。
-      </p>
-      <div
-        style={{ marginTop: 8, textAlign: "start" }}
-        role="region"
-        aria-label="DSL 预览"
-      >
-        <PreviewCanvas>
-          <Renderer node={dsl} onRootCardPixelSize={onRootCardPixelSize} />
-        </PreviewCanvas>
       </div>
-    </div>
+
+      <section className="app-preview-bleed" aria-label="DSL 预览">
+        <div className="app-preview-bleed-intro">
+          <h3 style={{ marginTop: 24, marginBottom: 8 }}>预览</h3>
+          <p
+            style={{
+              margin: "0 0 8px",
+              fontSize: 13,
+              color: "#555",
+              textAlign: "start",
+            }}
+          >
+            下方为画布区域（占满内容区宽度，不受上方表单 720px 限制）：画布右下角可拖拽改变预览区大小；根
+            DSL 为单个 card 时拖动手柄移动预览块；根为仅含多张 card 的 container
+            时各有「拖动卡片 1/2…」。单根 card 时卡片右下角拖拽可改卡片大小并写入 width /
+            height。
+          </p>
+        </div>
+        <div className="app-preview-canvas-host">
+          {isContainerOfOnlyCards(dsl) ? (
+            <MultiCardPreviewCanvas
+              panels={dsl.children.map((card, i) => (
+                <Renderer key={i} node={card} />
+              ))}
+            />
+          ) : (
+            <PreviewCanvas>
+              <Renderer
+                node={dsl}
+                onRootCardPixelSize={onRootCardPixelSize}
+              />
+            </PreviewCanvas>
+          )}
+        </div>
+      </section>
+    </>
   );
 }
