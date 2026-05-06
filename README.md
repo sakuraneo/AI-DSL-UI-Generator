@@ -10,7 +10,7 @@
 - **Vitest** 单测 + **GitHub Actions**（pnpm frozen lockfile + lint + build + test）
 - 页面内 **复制 / 下载** 当前 DSL JSON，**粘贴** 或 **选择本地 `.json` 文件** 导入，经 Zod 校验后预览（不依赖联网）
 
-详细架构、Mermaid 数据流与答辩话术见 **[TECHNICAL.md](./TECHNICAL.md)**。
+详细架构、Mermaid 数据流见 **[TECHNICAL.md](./TECHNICAL.md)**。
 
 ## 本地运行
 
